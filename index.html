@@ -734,10 +734,20 @@
         const pages = document.querySelectorAll('.page');
         let currentPage = 0;
 
+        function updatePageStack() {
+            pages.forEach((page, index) => {
+                if (index < currentPage) {
+                    // Flipped pages go to back
+                    page.style.zIndex = index;
+                } else {
+                    // Unflipped pages stay on top, with current page highest
+                    page.style.zIndex = pages.length - index;
+                }
+            });
+        }
+
         // Initialize z-indices
-        pages.forEach((page, index) => {
-            page.style.zIndex = pages.length - index;
-        });
+        updatePageStack();
 
         pages.forEach((page, index) => {
             page.addEventListener('click', (e) => {
@@ -745,18 +755,18 @@
                 if(e.target.tagName === 'BUTTON') return;
 
                 if (index === currentPage) {
-                    // Flip forward: lower the z-index so next page appears on top
+                    // Flip forward
                     page.classList.add('flipped');
                     currentPage++;
                     setTimeout(() => { 
-                        page.style.zIndex = index; 
+                        updatePageStack();
                     }, 100);
                 } else if (index === currentPage - 1) {
-                    // Flip backward: raise the z-index so current page reappears on top
+                    // Flip backward
                     page.classList.remove('flipped');
                     currentPage--;
                     setTimeout(() => { 
-                        page.style.zIndex = pages.length - index; 
+                        updatePageStack();
                     }, 100);
                 }
             });
