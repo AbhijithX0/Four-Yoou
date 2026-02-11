@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Story</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Indie+Flower&family=Sacramento&family=Caveat:wght@400;700&family=Great+Vibes&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --paper-color: #fffdfc;
+            --cover-color: #ffffff; /* Brighter, Vibrant Red */
+            --spine-color: #d90429; /* Deep Red for shading */
+            --text-color: #590d22;
+            --accent-color: #ff8fa3;
+            --shadow-deep: 5px 5px 15px rgba(0,0,0,0.4);
+            --gold-accent: #ffd700;
+        }
+
+        body {
+            /* Clean background to let the red pop */
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe5e5 100%);
+            font-family: 'Indie Flower', cursive;
+            color: var(--text-color);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            perspective: 1500px;
+        }
+
+        /* Sakura (Cherry Blossom) Animation */
+        .sakura-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .sakura {
+            position: absolute;
+            background-color: #ffb7b2;
+            border-radius: 100% 0 100% 0;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translate(0, -10%) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate(100px, 110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Music Button */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .music-control:hover { transform: scale(1.1); }
+
+        /* Book Container */
+        .book {
+            position: relative;
+            width: 420px;
+            height: 600px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            z-index: 10;
+        }
+
+        /* Individual Pages */
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            cursor: pointer;
+            border-radius: 3px 10px 10px 3px;
+        }
+
+        /* Paper Texture & Lines */
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-color: var(--paper-color);
+            padding: 2.5rem 2.5rem;
+            box-sizing: border-box;
+            border-left: 5px solid var(--spine-color);
+            box-shadow: var(--shadow-deep);
+            border-radius: 3px 10px 10px 3px;
+            overflow: hidden;
+        }
+
+        .front { z-index: 2; }
+        .back {
+            transform: rotateY(180deg);
+            z-index: 1;
+            border-left: none;
+            border-right: 5px solid var(--spine-color);
+            border-radius: 10px 3px 3px 10px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 10%); /* Shadow for depth */
+        }
+
+        /* Page Content */
+        h1 { font-family: 'Great Vibes', cursive; color: #fff; }
+        h2 { font-family: 'Caveat', cursive; font-weight: 700; color: #d90429; font-size: 1.8rem; margin-bottom: 0.5rem; position: relative; z-index: 5; }
+        
+        p {
+            line-height: 1.5rem;
+            font-size: 0.95rem; 
+            margin-bottom: 1rem;
+            text-align: justify;
+            color: #4a0a18;
+            position: relative;
+            z-index: 5; /* Ensure text is above hearts */
+        }
+
+        .highlight-date {
+            color: #d90429;
+            font-weight: bold;
+            background: #ffe3e3;
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ff8fa3;
+            left: 0;
+        }
+
+        /* --- RED AESTHETIC COVER STYLES --- */
+        .cover-front {
+            background-color: var(--cover-color);
+            /* Subtle texture for cover */
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H22v18H0v-2h20v-2H0v-2h20v-2H0v-2h20v-2H0zM32 20v18h2V20h-2zM36 20v18h2V20h-2zM28 20v18h2V20h-2zM24 20v18h2V20h-2z' fill='%239e0000' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #d90429;
+            border-left: 12px solid var(--spine-color);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Gold aesthetic border frame */
+        .cover-frame {
+            border: 2px solid rgba(255, 0, 0, 0.4);
+            width: 85%;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .cover-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 1rem;
+            z-index: 10;
+        }
+
+        .cover-subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.9);
+            border-top: 1px solid rgba(255,255,255,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.4);
+            padding: 5px 0;
+            margin-top: 10px;
+        }
+
+        .cover-back {
+            background-color: var(--cover-color);
+             background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H22v18H0v-2h20v-2H0v-2h20v-2H0v-2h20v-2H0zM32 20v18h2V20h-2zM36 20v18h2V20h-2zM28 20v18h2V20h-2zM24 20v18h2V20h-2z' fill='%239e0000' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            border: 1px solid #d90429;
+            border-right: 12px solid var(--spine-color);
+        }
+
+        /* --- DECORATIVE IMAGES (Replaces CSS Shapes) --- */
+        .deco-img {
+            position: absolute;
+            z-index: 1; /* Keep behind text */
+            opacity: 0.9;
+            filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.2));
+            object-fit: contain;
+            pointer-events: none; /* Let clicks pass through */
+        }
+
+        /* Polaroid Styles */
+        .polaroid-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: 20;
+        }
+
+        .polaroid {
+            background: white;
+            padding: 8px 8px 30px 8px;
+            box-shadow: 3px 4px 10px rgba(0,0,0,0.2);
+            position: absolute;
+            transition: transform 0.3s;
+            width: 140px;
+            border: 1px solid #ddd;
+        }
+        
+        .polaroid img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            background-color: #f0f0f0;
+        }
+
+        .tape {
+            background-color: rgba(255, 255, 255, 0.5);
+            width: 50px;
+            height: 18px;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            z-index: 10;
+            -webkit-backdrop-filter: blur(1px);
+            backdrop-filter: blur(1px);
+        }
+
+        /* Button Styles */
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn {
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+ 
+
+        .btn-yes {
+            background: #ff2a2a;
+            color: white;
+        }
+        .btn-yes:hover { transform: scale(1.1); background: #d90429; }
+
+        .btn-no {
+            background: white;
+            color: #590d22;
+        }
+        .btn-no:hover { background: #ffe3e3; }
+
+        .flipped { transform: rotateY(-180deg); }
+
+        /* Mobile Scale */
+        @media (max-width: 768px) {
+            .book { width: 340px; height: 550px; }
+            p { font-size: 0.85rem; line-height: 1.3rem; }
+            .page { padding: 1.5rem; }
+        }
+
+        .instruction {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff2a2a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+            background: rgba(255,255,255,0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            white-space: nowrap;
+            z-index: 99;
+        }
+        /* Scrambled Flowers on Page 8 */
+.flower-scramble {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 12px auto 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.flower-scramble img {
+    position: absolute;
+    width: 70px;
+    opacity: 0.95;
+    filter: drop-shadow(2px 4px 6px rgba(245, 165, 165, 0.25));
+}
+
+/* Random scrambled layout */
+.f1 { top: 5px;  left: 10px;  transform: rotate(-15deg); }
+.f2 { top: 15px; left: 95px;  transform: rotate(10deg); }
+.f3 { top: 70px; left: 25px;  transform: rotate(-8deg); }
+.f4 { top: 80px; left: 105px; transform: rotate(12deg); }
+.f5 { top: 40px; left: 55px;  transform: rotate(-5deg); }
+
+
+        @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.7; } }
+        /* Tablet: scale the book */
+        @media (max-width: 768px) and (min-width: 481px) {
+            .book {
+                width: 340px;
+                height: 550px;
+            }
+            p { font-size: 0.85rem; line-height: 1.3rem; }
+        }
+        /* Mobile: scale the book to always fit the viewport while keeping 3D flips */
+        @media (max-width: 480px) {
+            html {
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            body {
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                align-items: center;
+                justify-content: center;
+                perspective: 1000px;
+            }
+
+            /* Book scales responsively while maintaining aspect ratio and 3D transforms */
+            .book {
+                position: relative;
+                aspect-ratio: 420 / 600;
+                width: min(90vw, calc(100vh * 0.7 - 10px));
+                height: auto;
+                transform-style: preserve-3d;
+                margin: 0 auto;
+                z-index: 10;
+            }
+
+            /* Pages maintain 3D flip transforms */
+            .page {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                transform-origin: left center;
+                transform-style: preserve-3d;
+                transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+                cursor: pointer;
+                border-radius: 8px;
+            }
+
+            .front, .back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                padding: 1.2rem;
+                box-shadow: var(--shadow-deep);
+                border-left: 6px solid var(--spine-color);
+                box-sizing: border-box;
+                backface-visibility: hidden;
+                background-color: var(--paper-color);
+                border-radius: 3px 10px 10px 3px;
+                overflow: hidden;
+            }
+
+            .back {
+                transform: rotateY(180deg);
+                border-left: none;
+                border-right: 6px solid var(--spine-color);
+                border-radius: 10px 3px 3px 10px;
+            }
+
+            /* Decorative images scale for mobile */
+            .deco-img {
+                position: absolute;
+                max-width: 22%;
+                opacity: 0.95;
+                pointer-events: none;
+                filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.2));
+            }
+
+            .polaroid {
+                width: 38% !important;
+                left: auto !important;
+                right: auto !important;
+                transform: none !important;
+                max-width: 140px;
+            }
+
+            .btn {
+                font-size: 1.05rem;
+                padding: 8px 20px;
+            }
+
+            .cover-title {
+                font-size: 3rem;
+            }
+
+            .cover-frame {
+                width: 94%;
+                height: auto;
+            }
+
+            .cover-subtitle {
+                font-size: 0.75rem;
+            }
+
+            p {
+                font-size: 0.8rem;
+                line-height: 1.2rem;
+                margin-bottom: 0.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .instruction {
+                bottom: 12px;
+                font-size: 0.85rem;
+                padding: 4px 10px;
+            }
+
+            .music-control {
+                top: 10px;
+                right: 10px;
+                padding: 8px;
+            }
+
+            .flower-scramble {
+                width: 160px;
+                height: 160px;
+                margin: 8px auto 0;
+            }
+
+            .flower-scramble img {
+                width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sakura Background -->
+    <div class="sakura-container" id="sakura-container"></div>
+
+    <!-- Audio Player -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/02/07/audio_191958045a.mp3?filename=piano-moment-9835.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="music-icon">🎵</span>
+    </div>
+
+    <div class="instruction">Click right side to flip page &rarr;</div>
+
+    <!-- Book -->
+    <div class="book" id="book">
+        
+        <!-- COVER -->
+        <div class="page" style="z-index: 10;">
+            <div class="front cover-front">
+                <!-- REPLACE THESE SRC URLS WITH YOUR OWN IMAGES -->
+                <img src="bg remv/img.png" class="deco-img" style="width: 80px; top: 30px; left: 25px; transform: rotate(-20deg);" alt="decoration">
+                <img src="bg remv/img10.png" class="deco-img" style="width: 75px; top: 70px; right: 40px; transform: rotate(15deg);" alt="decoration">
+                <img src="bg remv/img6.png" class="deco-img" style="width: 95px; bottom: 50px; right: 25px; transform: rotate(-10deg);" alt="decoration">
+                <img src="bg remv/img3.png" class="deco-img" style="width: 150px; bottom: 62px; left: 35px; transform: rotate(30deg);" alt="decoration">
+
+                <div class="cover-frame" >
+                    <h1 class="cover-title" style="color: red;">My Love</h1>
+                    <div class="cover-subtitle" style="color: red;">A Story About Us</div>
+                    <div class="mt-8 text-3xl opacity-90" style="color: red;">❦</div>
+                </div>
+            </div>
+            
+            <!-- Page 1 -->
+            <div class="back">
+                <!-- Decoration Images -->
+                <img src="bg remv/img.png" class="deco-img" style="width: 50px; top: 10px; right: 10px; transform: rotate(10deg);" alt="heart">
+                <img src="bg remv/img11.png" class="deco-img" style="width: 85px; bottom: 40px; right: 30px; transform: rotate(10deg);" alt="stickman">
+                
+                <h2 class="text-center mt-2">My Love,</h2>
+                <p>This letter is about us — our journey, our emotions, our struggles, our growth, and the beautiful bond we have built together. It is about everything we have felt, everything we have faced, and everything we still dream of. I want you to know how deeply you mean to me, how serious I am about you, and how grateful I am to have you in my life.</p>
+                <p>You have suffered a lot in your past — from family, from friends, and from life itself. You have gone through pain, misunderstandings, loneliness, and silent battles that no one truly saw. There were days when you had to be strong even when you were completely broken inside. Yet, you never gave up. You kept moving forward, carrying everything quietly within your heart. Your strength, your kindness, your patience, and your pure soul are what made me fall in love with you.</p>
+                
+                <img src="bg remv/" class="deco-img" style="width: 30px; bottom: 30px; left: 15px; transform: rotate(-5deg);" alt="heart">
+                <div class="page-number">1</div>
+            </div>
+        </div>
+
+        <!-- Page 2 & 3 -->
+        <div class="page" style="z-index: 9;">
+            <div class="front">
+                <!-- Decoration Images -->
+                <img src="bg remv/img19.png" class="deco-img" style="width: 50px; top: 10px; right: 20px; transform: rotate(-5deg);" alt="stickman">
+                <img src="bg remv/img22.png" class="deco-img" style="width: 100px; top: 420px; left: 25px; transform: rotate(-25deg);" alt="heart">
+
+                <p>From the very beginning, your presence brought a calmness into my life. Your smile, your laughter, the way you speak, and even your smallest expressions make my heart feel lighter. Your laughter, especially, makes me genuinely happy — it is one of the most beautiful sounds in my world.</p>
+                <p>On <span class="highlight-date">25 May 2025</span>, our IPR semester exam was postponed due to heavy rain. That day became one of the most unforgettable days of my life. Even though I knew you were not ready to be in a relationship, I still told you my feelings. I didn’t do it to force love, and I didn’t expect anything in return. I only wanted you to know what my heart truly felt.</p>
+                <div class="page-number">2</div>
+            </div>
+            <div class="back">
+                <img src="bg remv/img9.png" class="deco-img" style="width: 55px; top: 2px; right: 20px; transform: rotate(15deg);" alt="decoration">
+
+                <p>You told me not to wait for you, because there was no guarantee and you might still say no someday. You even said your feelings might not change. At one point, you asked me if I was holding on to any hope, and I replied “no.” But the truth is, I still did have hope. I only said no because I was afraid — afraid that if I admitted it, you might pull away, stop talking to me like we did every day, and slowly drift out of my life. Even though I said “okay,” and “no,” my feelings never went away. I respected your words, your emotions, and your space, but deep inside, my heart quietly chose you — patiently and honestly.</p>
+                <p>After that, we stayed as friends, even though you knew how deeply I loved you. Staying close to you, supporting you silently, caring for you, and respecting your space meant everything to me.</p>
+                
+                <img src="bg remv/img8.png" class="deco-img" style="width: 120px; bottom: 40px; left: 40px; transform: rotate(10deg);" alt="decoration">
+                <div class="page-number">3</div>
+            </div>
+        </div>
+
+        <!-- Page 4 & 5 -->
+        <div class="page" style="z-index: 8;">
+            <div class="front">
+                 <img src="bg remv/img23.png" class="deco-img" style="width: 55px; top: 10px; right: 10px; transform: rotate(45deg);" alt="decoration">
+                 
+                <p>Days passed, but my feelings only grew stronger. I watched you grow, fight your fears, face your struggles, and slowly heal. I admired your courage more each day. Loving you taught me patience, understanding, and hope. No matter how long it took, I was willing to wait, because you were worth everything.</p>
+                <p>Then came <span class="highlight-date">19 January</span>, a day I can never forget. When you told me that you had also fallen in love with me, I was shocked, overwhelmed, and unbelievably happy. I couldn’t believe that the person I loved so deeply felt the same way. From 19 January  <span class="highlight-date">Today</span>, every single day with you has been filled with warmth, comfort, understanding, and love. Being in love with you has been the most beautiful feeling I have ever known.</p>
+                                <img src="bg remv/img12.png" class="deco-img" style="width: 120px; bottom: 35px; left: 40px; transform: rotate(10deg);" alt="decoration">
+                                <img src="bg remv/img13.png" class="deco-img" style="width: 150px; bottom: 35px; left: 255px; transform: rotate(25deg);" alt="decoration">
+                <div class="page-number">4</div>
+            </div>
+            <div class="back">
+                
+
+                <p>You know my entire past — my struggles, my fears, my insecurities, and my pain. You are the first person who truly listened to me without judging, who understood me deeply, and who supported me when I needed it the most. You made me feel heard. You made me feel valued. You made me feel safe to be myself.</p>
+                <p>With you, I learned that being in love does not mean sacrificing our dreams or our studies. Instead, it means growing together. I promise that we will always support each other’s academics, ambitions, and goals. We will push each other to become better, stronger, and wiser. Our love will not distract us — it will motivate us to achieve more, to aim higher, and to build a future we both deserve.</p>
+                
+                 <img src="bg remv/img5.png" class="deco-img" style="width: 235px; bottom: 15px; right: 45px; transform: rotate(5deg);" alt="decoration">
+                <div class="page-number">5</div>
+            </div>
+        </div>
+
+        <!-- Page 6 & 7 -->
+        <div class="page" style="z-index: 7;">
+            <div class="front">
+                <img src="bg remv/download__1_-removebg-preview.png" class="deco-img" style="width: 135px; bottom: 15px; left: 150px; transform: rotate(0deg);" alt="decoration">
+
+                <p>I also want you to know something important. Even the recent time when I went silent and didn’t talk like usual, it was never because I wanted distance. It was only because I thought I was disturbing you. I cared so much about your peace that I chose silence over bothering you, even when my heart wanted to talk to you.</p>
+                <p>From that day, my dreams became our dreams.</p>
+                <p>I want to achieve all your dreams. I want to walk beside you as you chase your goals. I want to support your ambitions, encourage your passions, and celebrate every success with you. I want to be your strength when you feel weak, your calm when life becomes heavy, and your safe place when the world feels too loud.</p>
+                <div class="page-number">6</div>
+            </div>
+            <div class="back">
+
+                <img src="bg remv/img24.png" class="deco-img" style="width: 135px; bottom: 15px; left: 150px; transform: rotate(0deg);" alt="decoration">
+                 
+
+                <p>In our future, I see us growing together — balancing love and responsibilities, studies and dreams, emotions and strength. I see us overcoming every challenge hand in hand. I see laughter, late-night talks, shared goals, small moments, big achievements, and endless memories.</p>
+                <p>And I want you to know this clearly — I am serious about you, about us, and about this love. No matter what life brings, no matter how hard things become, I promise I will never leave your side. I will stand with you, fight for you, and choose you — always.</p>
+                <div class="page-number">7</div>
+            </div>
+        </div>
+
+        <!-- Page 8 & Dreams -->
+        <div class="page" style="z-index: 6;">
+            <div class="front">
+                <img src="https://cdn-icons-png.flaticon.com/512/2589/2589175.png" class="deco-img" style="width: 30px; top: 20px; left: 20px; transform: rotate(-20deg);" alt="decoration">
+
+                <p>I don’t promise a perfect life. But I promise a loyal heart, honest love, endless support, and a future where you will never walk alone.</p>
+                <p class="text-xl text-center mt-10" style="font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: #ff2a2a;">My heart belongs to you. Always.<br>Forever yours. ❤️</p>
+                <!-- <p class="text-center mt-4 text-sm text-gray-500">this is my story</p> -->
+                <br>
+                <div class="flower-scramble">
+    <img src="bg remv/img15.png" class="fimg f1" alt="flower">
+    <img src="bg remv/img16.png" class="fimg f2" alt="flower">
+    <img src="bg remv/img18.png" class="fimg f3" alt="flower">
+    <img src="bg remv/img19.png" class="fimg f4" alt="flower">
+    <img src="bg remv/img20.png" class="fimg f5" alt="flower">
+    <img src="bg remv/img.png" class="fimg f5" alt="flower">
+</div>
+
+                <div class="page-number">8</div>
+            </div>
+            
+            <!-- POLAROID PAGE - CHANGED HEADER -->
+            <div class="back">
+                <h2 class="text-center" style="font-size: 1.6rem; margin-top: 10px;">I want to achieve all your dreams</h2>
+                
+                <!-- Decorations for Dreams Page -->
+                <img src="bg remv/img17.png" class="deco-img" style="width: 40px; top: 10px; left: 10px; transform: rotate(-10deg);" alt="decoration">
+                <img src="bg remv/img17.png" class="deco-img" style="width: 40px; top: 10px; right: 10px; transform: rotate(10deg);" alt="stickman">
+
+                <div class="polaroid-container">
+                    <!-- Random tilts for aesthetics -->
+                    <div class="polaroid" style="top: 60px; left: 20px; transform: rotate(-8deg);">
+                        <div class="tape"></div>
+                        <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=300" alt="Us">
+                    </div>
+                    
+                    <div class="polaroid" style="top: 90px; right: 20px; transform: rotate(6deg);">
+                        <div class="tape"></div>
+                        <img src="https://images.unsplash.com/photo-1621112904887-419379ce6824?q=80&w=300" alt="Heart">
+                    </div>
+
+                    <div class="polaroid" style="bottom: 70px; left: 50px; transform: rotate(-3deg); width: 160px; z-index: 5;">
+                        <div class="tape"></div>
+                        <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300" alt="Love">
+                        <div class="text-center text-xs mt-2 text-gray-500">You & Me</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL PAGE: PROPOSAL -->
+        <div class="page" style="z-index: 5;">
+            <div class="front" style="background: #fff0f3;">
+                <img src="https://cdn-icons-png.flaticon.com/512/742/742751.png" class="deco-img" style="width: 40px; top: 30px; left: 30px; transform: rotate(-15deg);" alt="decoration">
+                <img src="https://cdn-icons-png.flaticon.com/512/2904/2904973.png" class="deco-img" style="width: 30px; bottom: 30px; right: 30px; transform: rotate(15deg);" alt="decoration">
+
+                <div class="flex flex-col items-center justify-center h-full">
+                    <h2 class="text-4xl text-center mb-6" style="font-family: 'Great Vibes', cursive; font-size: 3.5rem; line-height: 1.2;">Will you be my Valentine?</h2>
+                    
+                    <p class="text-xl text-center mb-8 font-bold text-rose-600">Not just for today, but Forever? ❤️</p>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-yes" onclick="handleYes()">YES!</button>
+                        <button class="btn btn-no" id="noBtn" onmouseover="moveButton()">No</button>
+                    </div>
+                </div>
+            </div>
+            <div class="back cover-back">
+                <!-- Hearts on back cover too -->
+                <img src="https://cdn-icons-png.flaticon.com/512/2589/2589175.png" class="deco-img" style="width: 30px; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(10deg);" alt="decoration">
+                
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-white text-center">
+                       
+                        <p class="mt-2">Made with love</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* --- Sakura Animation Engine --- */
+        function createSakura() {
+            const sakura = document.createElement('div');
+            sakura.classList.add('sakura');
+            
+            // Randomize size and position
+            const size = Math.random() * 10 + 5;
+            sakura.style.width = size + 'px';
+            sakura.style.height = size + 'px';
+            sakura.style.left = Math.random() * 100 + 'vw';
+            sakura.style.animationDuration = Math.random() * 3 + 5 + 's';
+            sakura.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.getElementById('sakura-container').appendChild(sakura);
+
+            // Cleanup
+            setTimeout(() => {
+                sakura.remove();
+            }, 8000);
+        }
+
+        setInterval(createSakura, 200);
+
+        /* --- Audio Control --- */
+        const audio = document.getElementById('bg-music');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                document.getElementById('music-icon').innerText = "🎵";
+            } else {
+                audio.play();
+                document.getElementById('music-icon').innerText = "⏸️";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        /* --- Book Logic --- */
+        const pages = document.querySelectorAll('.page');
+        let currentPage = 0;
+
+        // Initialize z-indices
+        pages.forEach((page, index) => {
+            page.style.zIndex = pages.length - index;
+        });
+
+        pages.forEach((page, index) => {
+            page.addEventListener('click', (e) => {
+                // Prevent page flip if clicking buttons
+                if(e.target.tagName === 'BUTTON') return;
+
+                if (index === currentPage) {
+                    // Flip forward: lower the z-index so next page appears on top
+                    page.classList.add('flipped');
+                    currentPage++;
+                    setTimeout(() => { 
+                        page.style.zIndex = index; 
+                    }, 100);
+                } else if (index === currentPage - 1) {
+                    // Flip backward: raise the z-index so current page reappears on top
+                    page.classList.remove('flipped');
+                    currentPage--;
+                    setTimeout(() => { 
+                        page.style.zIndex = pages.length - index; 
+                    }, 100);
+                }
+            });
+        });
+
+        /* --- Button Interactions --- */
+        function handleYes() {
+            // 1. Confetti Explosion
+            for(let i=0; i<50; i++) {
+                createSakura(); // More sakura!
+            }
+            
+            // 2. Alert/Message
+            alert("YAY! ❤️ I love you! Prepare your email...");
+
+            // 3. Email Logic
+            const email = "mailto:your_email@example.com?subject=I Said YES! ❤️&body=My Love,%0D%0A%0D%0AYES! I will be your Valentine, not just for today but forever. ❤️%0D%0A%0D%0AI love you!";
+            window.location.href = email;
+        }
+
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const x = Math.random() * 100 - 50;
+            const y = Math.random() * 100 - 50;
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+            btn.innerText = "Please? 🥺";
+        }
+    </script>
+</body>
+</html>
