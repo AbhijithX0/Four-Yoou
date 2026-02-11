@@ -732,45 +732,46 @@
 
         /* --- Book Logic --- */
         const pages = document.querySelectorAll('.page');
-        let currentPage = 0;
+        let visiblePageIndex = 0;
 
-        function updatePageStack() {
+        // Set FIXED z-indices - earlier pages always stay on top
+        pages.forEach((page, index) => {
+            page.style.zIndex = pages.length - index;
+        });
+
+        function showPage(pageIndex) {
+            // All pages before visiblePageIndex are flipped (showing their back)
             pages.forEach((page, index) => {
-                if (index < currentPage) {
-                    // Flipped pages go to back
-                    page.style.zIndex = index;
+                if (index < pageIndex) {
+                    page.classList.add('flipped');
                 } else {
-                    // Unflipped pages stay on top, with current page highest
-                    page.style.zIndex = pages.length - index;
+                    page.classList.remove('flipped');
                 }
             });
+            visiblePageIndex = pageIndex;
         }
 
-        // Initialize z-indices
-        updatePageStack();
-
-        pages.forEach((page, index) => {
+        pages.forEach((page) => {
             page.addEventListener('click', (e) => {
                 // Prevent page flip if clicking buttons
                 if(e.target.tagName === 'BUTTON') return;
 
-                if (index === currentPage) {
-                    // Flip forward
-                    page.classList.add('flipped');
-                    currentPage++;
-                    setTimeout(() => { 
-                        updatePageStack();
-                    }, 100);
-                } else if (index === currentPage - 1) {
-                    // Flip backward
-                    page.classList.remove('flipped');
-                    currentPage--;
-                    setTimeout(() => { 
-                        updatePageStack();
-                    }, 100);
+                const rect = page.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const isRightHalf = clickX > rect.width / 2;
+
+                if (isRightHalf && visiblePageIndex < pages.length - 1) {
+                    // Right click - flip forward to next page
+                    showPage(visiblePageIndex + 1);
+                } else if (!isRightHalf && visiblePageIndex > 0) {
+                    // Left click - flip backward to previous page
+                    showPage(visiblePageIndex - 1);
                 }
             });
         });
+
+        // Initialize showing first page
+        showPage(0);
 
         /* --- Button Interactions --- */
         function handleYes() {
