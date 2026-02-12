@@ -348,11 +348,51 @@
             }
             .page {
                 width: calc(100% - 1rem);
-                height: clamp(500px, 74dvh, 900px);
+                height: auto;
+                min-height: 0;
+                perspective: none;
+                cursor: default;
+            }
+            .page.flipped, .flipped {
+                transform: none !important;
+            }
+            .front,
+            .back,
+            .cover-front,
+            .cover-back {
+                position: relative;
+                inset: auto;
+                width: 100%;
+                height: auto;
+                min-height: 420px;
+                transform: none !important;
+                backface-visibility: visible;
+            }
+            .front,
+            .back {
+                margin-bottom: 0.8rem;
+            }
+            .back {
+                border-left: 4px solid var(--spine-color);
+                border-right: none;
+                border-radius: 3px 10px 10px 3px;
+                background-image: none;
+            }
+            .cover-front {
+                border-left: 8px solid var(--spine-color);
+            }
+            .cover-back {
+                border-right: none;
+                border-left: 8px solid var(--spine-color);
             }
             p { font-size: 0.88rem; line-height: 1.35rem; }
             .deco-img { width: min(44px, 15vw) !important; }
             .cover-title { font-size: 2rem; }
+            .page-number {
+                position: static;
+                margin-top: auto;
+                padding-top: 0.5rem;
+            }
             .instruction {
                 bottom: 10px;
                 font-size: 0.85rem;
@@ -658,11 +698,23 @@
 
         /* --- Book Logic --- */
         const pages = document.querySelectorAll('.page');
+        const instructionEl = document.querySelector('.instruction');
+        const isMobileView = () => window.matchMedia('(max-width: 768px)').matches;
+
+        function syncBookMode() {
+            if (isMobileView()) {
+                pages.forEach((p) => p.classList.remove('flipped'));
+                if (instructionEl) instructionEl.innerText = 'Scroll normally on mobile';
+            } else {
+                if (instructionEl) instructionEl.innerText = 'Tap/click right to flip page, left to flip back <->';
+            }
+        }
 
         pages.forEach((page) => {
             page.addEventListener('click', (e) => {
                 // Prevent page flip if clicking buttons
                 if(e.target.tagName === 'BUTTON') return;
+                if (isMobileView()) return;
 
                 const rect = page.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
@@ -677,6 +729,9 @@
                 }
             });
         });
+
+        syncBookMode();
+        window.addEventListener('resize', syncBookMode);
 
         // Touch-friendly fallback for Android devices where hover is unavailable.
         const noBtn = document.getElementById('noBtn');
