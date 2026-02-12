@@ -185,11 +185,12 @@
 
         .confetti-piece {
             position: fixed;
-            width: 10px;
-            height: 14px;
+            width: 12px;
+            height: 16px;
             opacity: 1;
             will-change: transform, opacity;
             border-radius: 2px;
+            box-shadow: 0 0 1px rgba(0,0,0,0.25);
         }
 
         @keyframes fall {
@@ -399,6 +400,19 @@
             height: 100%;
             pointer-events: none; 
             z-index: 20;
+        }
+
+        .dreams-page h2 {
+            margin-top: 0 !important;
+            margin-bottom: 0.9rem;
+            position: relative;
+            z-index: 30;
+        }
+
+        .dreams-page .polaroid-container {
+            margin-top: 0.75rem;
+            min-height: 280px;
+            height: calc(100% - 84px);
         }
 
         .polaroid {
@@ -711,7 +725,7 @@
             </div>
             
             <!-- Page 1 -->
-            <div class="back">
+            <div class="back dreams-page">
                 <!-- Decoration Images -->
                 <img src="bg remv/img.png" class="deco-img" style="width: 50px; top: 10px; right: 10px; transform: rotate(10deg);" alt="heart">
                 <img src="bg remv/img11.png" class="deco-img" style="width: 85px; bottom: 40px; right: 30px; transform: rotate(10deg);" alt="stickman">
@@ -720,7 +734,7 @@
                 <p>This letter is about us — our journey, our emotions, our struggles, our growth, and the beautiful bond we have built together. It is about everything we have felt, everything we have faced, and everything we still dream of. I want you to know how deeply you mean to me, how serious I am about you, and how grateful I am to have you in my life.</p>
                 <p>You have suffered a lot in your past — from family, from friends, and from life itself. You have gone through pain, misunderstandings, loneliness, and silent battles that no one truly saw. There were days when you had to be strong even when you were completely broken inside. Yet, you never gave up. You kept moving forward, carrying everything quietly within your heart. Your strength, your kindness, your patience, and your pure soul are what made me fall in love with you.</p>
                 
-                <img src="bg remv/" class="deco-img" style="width: 30px; bottom: 30px; left: 15px; transform: rotate(-5deg);" alt="heart">
+                <img src="bg remv/img1.png" class="deco-img" style="width: 30px; bottom: 30px; left: 15px; transform: rotate(-5deg);" alt="heart">
                 <div class="page-number">1</div>
             </div>
         </div>
@@ -834,9 +848,9 @@
                         <img src="https://images.unsplash.com/photo-1621112904887-419379ce6824?q=80&w=300" alt="Heart">
                     </div>
 
-                    <div class="polaroid" style="bottom: 70px; left: 50px; transform: rotate(-3deg); width: 160px; z-index: 5;">
+                    <div class="polaroid" style="top: 170px; left: 50%; transform: translateX(-50%) rotate(-3deg); width: 115px; z-index: 5;">
                         <div class="tape"></div>
-                        <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300" alt="Love">
+                        <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300" alt="Love" style="height: 62px;">
                         <div class="text-center text-xs mt-2 text-gray-500">You & Me</div>
                     </div>
                 </div>
@@ -889,6 +903,11 @@
     <script>
         /* --- Sakura Animation Engine --- */
         function createSakura() {
+            if (document.hidden) return;
+            const sakuraContainer = document.getElementById('sakura-container');
+            if (!sakuraContainer) return;
+            if (sakuraContainer.childElementCount > 40) return;
+
             const sakura = document.createElement('div');
             sakura.classList.add('sakura');
             
@@ -900,7 +919,7 @@
             sakura.style.animationDuration = Math.random() * 3 + 5 + 's';
             sakura.style.animationDelay = Math.random() * 2 + 's';
             
-            document.getElementById('sakura-container').appendChild(sakura);
+            sakuraContainer.appendChild(sakura);
 
             // Cleanup
             setTimeout(() => {
@@ -908,7 +927,8 @@
             }, 8000);
         }
 
-        setInterval(createSakura, 200);
+        const sakuraSpawnInterval = window.matchMedia('(pointer: coarse)').matches ? 360 : 260;
+        setInterval(createSakura, sakuraSpawnInterval);
 
         function createConfettiBurst(count = 140) {
             const container = document.getElementById('confetti-container');
@@ -933,21 +953,31 @@
                 const duration = isCoarsePointer
                     ? 1700 + Math.random() * 900
                     : 1300 + Math.random() * 900;
+                const endTransform = `translate3d(${startX + travelX}px, ${startY + travelY}px, 0) rotate(${rotate}deg)`;
 
                 piece.style.transform = `translate3d(${startX}px, ${startY}px, 0)`;
                 container.appendChild(piece);
-                piece.animate(
-                    [
-                        { transform: `translate3d(${startX}px, ${startY}px, 0) rotate(0deg)`, opacity: 1, offset: 0 },
-                        { opacity: 1, offset: 0.65 },
-                        { transform: `translate3d(${startX + travelX}px, ${startY + travelY}px, 0) rotate(${rotate}deg)`, opacity: 0, offset: 1 }
-                    ],
-                    {
-                        duration,
-                        easing: 'cubic-bezier(0.12, 0.8, 0.2, 1)',
-                        fill: 'forwards'
-                    }
-                );
+
+                if (typeof piece.animate === 'function') {
+                    piece.animate(
+                        [
+                            { transform: `translate3d(${startX}px, ${startY}px, 0) rotate(0deg)`, opacity: 1, offset: 0 },
+                            { opacity: 1, offset: 0.65 },
+                            { transform: endTransform, opacity: 0, offset: 1 }
+                        ],
+                        {
+                            duration,
+                            easing: 'cubic-bezier(0.12, 0.8, 0.2, 1)',
+                            fill: 'forwards'
+                        }
+                    );
+                } else {
+                    piece.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.8, 0.2, 1), opacity ${duration}ms linear`;
+                    requestAnimationFrame(() => {
+                        piece.style.transform = endTransform;
+                        piece.style.opacity = '0';
+                    });
+                }
                 setTimeout(() => piece.remove(), duration + 120);
             }
         }
@@ -1085,5 +1115,3 @@
     </script>
 </body>
 </html>
-
-
