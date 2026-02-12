@@ -338,13 +338,17 @@
         /* Mobile Scale */
         @media (max-width: 768px) {
             body {
-                align-items: flex-start;
+                display: block;
+                overflow-y: auto;
+                overflow-x: hidden;
                 padding-top: env(safe-area-inset-top, 0);
                 padding-bottom: env(safe-area-inset-bottom, 0);
             }
             .book {
                 gap: 1rem;
                 padding: 0.8rem 0.8rem 1.2rem;
+                height: auto;
+                overflow: visible;
             }
             .page {
                 width: calc(100% - 1rem);
@@ -371,6 +375,7 @@
             .front,
             .back {
                 margin-bottom: 0.8rem;
+                overflow: visible;
             }
             .back {
                 border-left: 4px solid var(--spine-color);
@@ -409,7 +414,7 @@
         @media (max-width: 420px) {
             .page {
                 width: calc(100% - 0.25rem);
-                height: clamp(520px, 78dvh, 980px);
+                height: auto;
             }
             .front, .back { padding: 1rem; }
             h2 { font-size: 1.2rem; }
