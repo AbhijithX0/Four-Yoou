@@ -111,6 +111,50 @@
             display: none;
         }
 
+        /* Scoped mobile fix only for the dreams page (before proposal). */
+        body.mobile-scroll-mode .dreams-page .polaroid-container {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.7rem;
+            height: auto;
+            pointer-events: auto;
+            margin-top: 0.6rem;
+        }
+
+        body.mobile-scroll-mode .dreams-page .polaroid {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            left: auto !important;
+            width: 100% !important;
+            transform: none !important;
+            margin: 0;
+            justify-self: stretch;
+        }
+
+        body.mobile-scroll-mode .dreams-page .polaroid img {
+            height: 95px;
+        }
+
+        body.mobile-scroll-mode .dreams-page .polaroid-container .polaroid:nth-child(3) {
+            grid-column: 1 / -1;
+            max-width: 210px;
+            justify-self: center;
+        }
+
+        body.mobile-scroll-mode .dreams-page > .deco-img {
+            position: static !important;
+            transform: none !important;
+            width: min(40px, 12vw) !important;
+            float: right;
+            margin: 0 0 0.45rem 0.45rem;
+        }
+
+        body.mobile-scroll-mode .dreams-page h2 {
+            clear: both;
+        }
+
         /* Sakura (Cherry Blossom) Animation */
         .sakura-container {
             position: absolute;
@@ -129,6 +173,37 @@
             border-radius: 100% 0 100% 0;
             opacity: 0.8;
             animation: fall linear infinite;
+        }
+
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 150;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            top: -12px;
+            width: 10px;
+            height: 14px;
+            opacity: 0.95;
+            will-change: transform, opacity;
+            animation: confetti-fall var(--dur, 2.4s) linear forwards;
+            transform: rotate(var(--rot, 0deg));
+            border-radius: 2px;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translate3d(0, -10px, 0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(680deg);
+                opacity: 0.15;
+            }
         }
 
         @keyframes fall {
@@ -511,6 +586,80 @@
             white-space: nowrap;
             z-index: 99;
         }
+
+        .feelings-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+        }
+
+        .feelings-modal.open {
+            display: flex;
+        }
+
+        .feelings-card {
+            width: min(520px, 96vw);
+            background: #fffdfc;
+            border: 1px solid #ffd5dd;
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+
+        .feelings-card h3 {
+            margin: 0 0 0.6rem;
+            color: #d90429;
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .feelings-input {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            border: 1px solid #ffb3c1;
+            border-radius: 12px;
+            padding: 0.8rem;
+            font-family: 'Indie Flower', cursive;
+            font-size: 1rem;
+            color: #4a0a18;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .feelings-actions {
+            margin-top: 0.8rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.6rem;
+        }
+
+        .feelings-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Caveat', cursive;
+            font-size: 1.1rem;
+            min-height: 44px;
+        }
+
+        .feelings-btn.cancel {
+            background: #fff;
+            color: #590d22;
+            border: 1px solid #ffb3c1;
+        }
+
+        .feelings-btn.send {
+            background: #ff2a2a;
+            color: #fff;
+        }
         /* Scrambled Flowers on Page 8 */
 .flower-scramble {
     position: relative;
@@ -543,6 +692,7 @@
 
     <!-- Sakura Background -->
     <div class="sakura-container" id="sakura-container"></div>
+    <div class="confetti-container" id="confetti-container"></div>
 
     <!-- Audio Player -->
     <audio id="bg-music" loop>
@@ -600,7 +750,7 @@
                 <p>On <span class="highlight-date">25 May 2025</span>, our IPR semester exam was postponed due to heavy rain. That day became one of the most unforgettable days of my life. Even though I knew you were not ready to be in a relationship, I still told you my feelings. I didn’t do it to force love, and I didn’t expect anything in return. I only wanted you to know what my heart truly felt.</p>
                 <div class="page-number">2</div>
             </div>
-            <div class="back">
+            <div class="back dreams-page">
                 <img src="bg remv/img9.png" class="deco-img" style="width: 55px; top: 2px; right: 20px; transform: rotate(15deg);" alt="decoration">
 
                 <p>You told me not to wait for you, because there was no guarantee and you might still say no someday. You even said your feelings might not change. At one point, you asked me if I was holding on to any hope, and I replied “no.” But the truth is, I still did have hope. I only said no because I was afraid — afraid that if I admitted it, you might pull away, stop talking to me like we did every day, and slowly drift out of my life. Even though I said “okay,” and “no,” my feelings never went away. I respected your words, your emotions, and your space, but deep inside, my heart quietly chose you — patiently and honestly.</p>
@@ -736,6 +886,17 @@
 
     </div>
 
+    <div class="feelings-modal" id="feelingsModal" aria-hidden="true">
+        <div class="feelings-card">
+            <h3>Write your feelings</h3>
+            <textarea id="feelingsInput" class="feelings-input" placeholder="Write your message here..."></textarea>
+            <div class="feelings-actions">
+                <button class="feelings-btn cancel" type="button" onclick="closeFeelingsModal()">Cancel</button>
+                <button class="feelings-btn send" type="button" onclick="sendFeelingsEmail()">Send</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /* --- Sakura Animation Engine --- */
         function createSakura() {
@@ -759,6 +920,25 @@
         }
 
         setInterval(createSakura, 200);
+
+        function createConfettiBurst(count = 140) {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#ff2a2a', '#ff8fa3', '#ffd166', '#7bd389', '#4cc9f0', '#ffffff'];
+
+            for (let i = 0; i < count; i++) {
+                const piece = document.createElement('span');
+                piece.className = 'confetti-piece';
+                piece.style.left = `${Math.random() * 100}vw`;
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.width = `${6 + Math.random() * 7}px`;
+                piece.style.height = `${9 + Math.random() * 10}px`;
+                piece.style.setProperty('--dur', `${1.8 + Math.random() * 1.8}s`);
+                piece.style.setProperty('--drift', `${-120 + Math.random() * 240}px`);
+                piece.style.setProperty('--rot', `${Math.random() * 360}deg`);
+                container.appendChild(piece);
+                setTimeout(() => piece.remove(), 4200);
+            }
+        }
 
         /* --- Audio Control --- */
         const audio = document.getElementById('bg-music');
@@ -821,30 +1001,75 @@
             moveButton();
         }, { passive: false });
 
-        /* --- Button Interactions --- */
-        function handleYes() {
-            // 1. Confetti Explosion
-            for(let i=0; i<50; i++) {
-                createSakura(); // More sakura!
-            }
-            
-            // 2. Alert/Message
-            alert("YAY! ❤️ I love you! Prepare your email...");
+                /* --- Button Interactions --- */
+        const mailConfig = {
+            to: "abhijithbinu2024@gmail.com",
+            subject: "I Said YES! \u2764\uFE0F",
+            body: [
+                "My Love,",
+                "",
+                "YES! I will be your Valentine, not just for today but forever. \u2764\uFE0F"
+            ].join("\n")
+        };
 
-            // 3. Email Logic
-            const email = "mailto:your_email@example.com?subject=I Said YES! ❤️&body=My Love,%0D%0A%0D%0AYES! I will be your Valentine, not just for today but forever. ❤️%0D%0A%0D%0AI love you!";
-            window.location.href = email;
+        function buildMailtoLink(extraMessage = "") {
+            const to = encodeURIComponent(mailConfig.to.trim());
+            const subject = encodeURIComponent(mailConfig.subject);
+            const finalBody = extraMessage
+                ? `${mailConfig.body}\n\nMy feelings:\n${extraMessage}\n`
+                : mailConfig.body;
+            const body = encodeURIComponent(finalBody);
+            return `mailto:${to}?subject=${subject}&body=${body}`;
         }
+
+        function handleYes() {
+            for (let i = 0; i < 50; i++) {
+                createSakura();
+            }
+            createConfettiBurst();
+            setTimeout(() => createConfettiBurst(80), 220);
+
+            openFeelingsModal();
+        }
+
+        const feelingsModal = document.getElementById('feelingsModal');
+        const feelingsInput = document.getElementById('feelingsInput');
+
+        function openFeelingsModal() {
+            feelingsModal.classList.add('open');
+            feelingsModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => feelingsInput.focus(), 50);
+        }
+
+        function closeFeelingsModal() {
+            feelingsModal.classList.remove('open');
+            feelingsModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function sendFeelingsEmail() {
+            const message = feelingsInput.value.trim();
+            const mailtoLink = buildMailtoLink(message);
+            window.location.href = mailtoLink;
+            closeFeelingsModal();
+        }
+
+        feelingsModal.addEventListener('click', (e) => {
+            if (e.target === feelingsModal) closeFeelingsModal();
+        });
 
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const x = Math.random() * 100 - 50;
             const y = Math.random() * 100 - 50;
             btn.style.transform = `translate(${x}px, ${y}px)`;
-            btn.innerText = "Please? 🥺";
+            btn.innerText = "Please? \uD83E\uDD7A";
         }
     </script>
 </body>
 </html>
+
+
 
 
