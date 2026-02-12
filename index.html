@@ -180,29 +180,59 @@
             inset: 0;
             pointer-events: none;
             overflow: hidden;
-            z-index: 150;
+            z-index: 350;
         }
 
         .confetti-piece {
-            position: absolute;
-            top: -12px;
+            position: fixed;
             width: 10px;
             height: 14px;
-            opacity: 0.95;
+            opacity: 1;
             will-change: transform, opacity;
-            animation: confetti-fall var(--dur, 2.4s) linear forwards;
+            animation-duration: var(--dur, 2.4s);
+            animation-timing-function: cubic-bezier(0.12, 0.8, 0.2, 1);
+            animation-fill-mode: forwards;
             transform: rotate(var(--rot, 0deg));
             border-radius: 2px;
         }
 
-        @keyframes confetti-fall {
+        .confetti-piece.left {
+            left: -14px;
+            top: var(--start-y, 62vh);
+            animation-name: confetti-side-left;
+        }
+
+        .confetti-piece.right {
+            right: -14px;
+            top: var(--start-y, 62vh);
+            animation-name: confetti-side-right;
+        }
+
+        @keyframes confetti-side-left {
             0% {
-                transform: translate3d(0, -10px, 0) rotate(0deg);
+                transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            35% {
                 opacity: 1;
             }
             100% {
-                transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(680deg);
-                opacity: 0.15;
+                transform: translate3d(var(--x, 70vw), var(--y, 38vh), 0) rotate(760deg) scale(0.9);
+                opacity: 0;
+            }
+        }
+
+        @keyframes confetti-side-right {
+            0% {
+                transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            35% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(calc(-1 * var(--x, 70vw)), var(--y, 38vh), 0) rotate(-760deg) scale(0.9);
+                opacity: 0;
             }
         }
 
@@ -926,20 +956,22 @@
 
         function createConfettiBurst(count = 140) {
             const container = document.getElementById('confetti-container');
-            const colors = ['#ff2a2a', '#ff8fa3', '#ffd166', '#7bd389', '#4cc9f0', '#ffffff'];
+            const colors = ['#ff2a2a', '#ff4d6d', '#ff8fa3', '#ffd166', '#7bd389', '#4cc9f0'];
 
             for (let i = 0; i < count; i++) {
                 const piece = document.createElement('span');
-                piece.className = 'confetti-piece';
-                piece.style.left = `${Math.random() * 100}vw`;
+                const fromLeft = i % 2 === 0;
+                piece.className = `confetti-piece ${fromLeft ? 'left' : 'right'}`;
                 piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.width = `${6 + Math.random() * 7}px`;
-                piece.style.height = `${9 + Math.random() * 10}px`;
-                piece.style.setProperty('--dur', `${1.8 + Math.random() * 1.8}s`);
-                piece.style.setProperty('--drift', `${-120 + Math.random() * 240}px`);
+                piece.style.width = `${7 + Math.random() * 7}px`;
+                piece.style.height = `${8 + Math.random() * 10}px`;
+                piece.style.setProperty('--dur', `${1.3 + Math.random() * 1.1}s`);
+                piece.style.setProperty('--start-y', `${58 + Math.random() * 18}vh`);
+                piece.style.setProperty('--x', `${50 + Math.random() * 42}vw`);
+                piece.style.setProperty('--y', `${-46 + Math.random() * 92}vh`);
                 piece.style.setProperty('--rot', `${Math.random() * 360}deg`);
                 container.appendChild(piece);
-                setTimeout(() => piece.remove(), 4200);
+                setTimeout(() => piece.remove(), 2600);
             }
         }
 
@@ -1072,7 +1104,6 @@
     </script>
 </body>
 </html>
-
 
 
 
