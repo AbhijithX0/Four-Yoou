@@ -37,6 +37,80 @@
             perspective: 1500px;
         }
 
+        /* Forced mobile behavior class (set by JS for touch devices) */
+        body.mobile-scroll-mode {
+            display: block !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            align-items: initial !important;
+        }
+
+        body.mobile-scroll-mode .book {
+            display: block;
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0.8rem 0.8rem 1.2rem;
+        }
+
+        body.mobile-scroll-mode .page {
+            width: calc(100% - 1rem);
+            height: auto !important;
+            min-height: 0;
+            perspective: none;
+            cursor: default;
+            margin: 0 auto 1rem;
+        }
+
+        body.mobile-scroll-mode .page.flipped,
+        body.mobile-scroll-mode .flipped {
+            transform: none !important;
+        }
+
+        body.mobile-scroll-mode .front,
+        body.mobile-scroll-mode .back,
+        body.mobile-scroll-mode .cover-front,
+        body.mobile-scroll-mode .cover-back {
+            position: relative;
+            inset: auto;
+            width: 100%;
+            height: auto;
+            min-height: 420px;
+            transform: none !important;
+            backface-visibility: visible;
+            overflow: visible;
+        }
+
+        body.mobile-scroll-mode .front,
+        body.mobile-scroll-mode .back {
+            margin-bottom: 0.8rem;
+        }
+
+        body.mobile-scroll-mode .back {
+            border-left: 4px solid var(--spine-color);
+            border-right: none;
+            border-radius: 3px 10px 10px 3px;
+            background-image: none;
+        }
+
+        body.mobile-scroll-mode .cover-front {
+            border-left: 8px solid var(--spine-color);
+        }
+
+        body.mobile-scroll-mode .cover-back {
+            border-right: none;
+            border-left: 8px solid var(--spine-color);
+        }
+
+        body.mobile-scroll-mode .page-number {
+            position: static;
+            margin-top: auto;
+            padding-top: 0.5rem;
+        }
+
+        body.mobile-scroll-mode .instruction {
+            display: none;
+        }
+
         /* Sakura (Cherry Blossom) Animation */
         .sakura-container {
             position: absolute;
@@ -704,13 +778,15 @@
         /* --- Book Logic --- */
         const pages = document.querySelectorAll('.page');
         const instructionEl = document.querySelector('.instruction');
-        const isMobileView = () => window.matchMedia('(max-width: 768px)').matches;
+        const isMobileView = () => window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
 
         function syncBookMode() {
             if (isMobileView()) {
+                document.body.classList.add('mobile-scroll-mode');
                 pages.forEach((p) => p.classList.remove('flipped'));
                 if (instructionEl) instructionEl.innerText = 'Scroll normally on mobile';
             } else {
+                document.body.classList.remove('mobile-scroll-mode');
                 if (instructionEl) instructionEl.innerText = 'Tap/click right to flip page, left to flip back <->';
             }
         }
