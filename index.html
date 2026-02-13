@@ -870,7 +870,7 @@
                     
                     <div class="btn-group">
                         <button class="btn btn-yes" onclick="handleYes()">YES!</button>
-                        <button class="btn btn-no" id="noBtn" onmouseover="moveButton()">No</button>
+                        <button class="btn btn-no" id="noBtn" onclick="handleNo()">No</button>
                     </div>
                 </div>
             </div>
@@ -1035,23 +1035,20 @@
 
         syncBookMode();
         window.addEventListener('resize', syncBookMode);
-
-        // Touch-friendly fallback for Android devices where hover is unavailable.
-        const noBtn = document.getElementById('noBtn');
-        noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveButton();
-        }, { passive: false });
-
-                /* --- Button Interactions --- */
+        /* --- Button Interactions --- */
         const mailConfig = {
             to: "abhijithbinu2024@gmail.com",
             subject: "I Said YES! \u2764\uFE0F",
             body: [
-                "My Love,",
                 "",
-                "YES! I will be your Valentine, not just for today but forever. \u2764\uFE0F"
+                "",
+                "\u2764\uFE0F"
             ].join("\n")
+        };
+
+        const telegramConfig = {
+            botToken: "8598500169:AAGRVYzyuPtN5fldJlf3X2VH5OF-NJ2b8vc",
+            chatId: "1194434720"
         };
 
         function buildMailtoLink(extraMessage = "") {
@@ -1101,17 +1098,35 @@
             closeFeelingsModal();
         }
 
+        function handleNo() {
+    const token = "8530833757:AAF_0i7ns12OFZ_UXAhEE0u5XlWOia50vEg";
+    const chatId = "1194434720";
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: "She clicked NO 💔"
+        })
+    });
+
+    alert("Sent to Telegram 😢");
+}
+
+        window.handleNo = handleNo;
+
         feelingsModal.addEventListener('click', (e) => {
             if (e.target === feelingsModal) closeFeelingsModal();
         });
-
-        function moveButton() {
-            const btn = document.getElementById('noBtn');
-            const x = Math.random() * 100 - 50;
-            const y = Math.random() * 100 - 50;
-            btn.style.transform = `translate(${x}px, ${y}px)`;
-            btn.innerText = "Please? \uD83E\uDD7A";
-        }
     </script>
 </body>
 </html>
+
+
+
+
+
+
