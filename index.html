@@ -695,8 +695,8 @@
     <div class="confetti-container" id="confetti-container"></div>
 
     <!-- Audio Player -->
-    <audio id="bg-music" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/02/07/audio_191958045a.mp3?filename=piano-moment-9835.mp3" type="audio/mpeg">
+    <audio id="bg-music" preload="auto" playsinline>
+        <source src="audio/bts_boy_in_luv_bangtansonyeondan_sangnamja_color_coded_lyric.mp3" type="audio/mpeg">
     </audio>
 
     <div class="music-control" onclick="toggleMusic()">
@@ -985,17 +985,116 @@
         /* --- Audio Control --- */
         const audio = document.getElementById('bg-music');
         let isPlaying = false;
+        const LOOP_START = 175; // 2:55
+        const LOOP_END = 201;   // 3:21
+        const FADE_SECONDS = 1.2;
+        let loopWatcher = null;
+        let fadeTimer = null;
+        let fadingOut = false;
+        let fadeLock = false;
+
+        function updateMusicIcon() {
+            document.getElementById('music-icon').innerText = isPlaying ? "Pause" : "Play";
+        }
+
+        function clearFadeTimer() {
+            if (fadeTimer) {
+                clearInterval(fadeTimer);
+                fadeTimer = null;
+            }
+        }
+
+        function fadeVolume(target, durationMs, done) {
+            clearFadeTimer();
+            const startVolume = Number.isFinite(audio.volume) ? audio.volume : 0;
+            const delta = target - startVolume;
+            const stepMs = 50;
+            const steps = Math.max(1, Math.round(durationMs / stepMs));
+            let currentStep = 0;
+
+            fadeTimer = setInterval(() => {
+                currentStep += 1;
+                const progress = currentStep / steps;
+                audio.volume = Math.min(1, Math.max(0, startVolume + delta * progress));
+
+                if (currentStep >= steps) {
+                    clearFadeTimer();
+                    audio.volume = target;
+                    if (done) done();
+                }
+            }, stepMs);
+        }
+
+        function stopLoopWatcher() {
+            if (loopWatcher) {
+                clearInterval(loopWatcher);
+                loopWatcher = null;
+            }
+        }
+
+        function startLoopWatcher() {
+            stopLoopWatcher();
+            loopWatcher = setInterval(() => {
+                if (audio.paused) return;
+
+                const t = audio.currentTime;
+                const fadeOutAt = LOOP_END - FADE_SECONDS;
+
+                if (!fadingOut && !fadeLock && t >= fadeOutAt && t < LOOP_END) {
+                    fadingOut = true;
+                    fadeLock = true;
+                    fadeVolume(0, FADE_SECONDS * 1000, () => {
+                        fadeLock = false;
+                    });
+                }
+
+                if (t >= LOOP_END - 0.05) {
+                    audio.currentTime = LOOP_START;
+                    fadingOut = false;
+                    audio.volume = 0;
+                    fadeVolume(1, FADE_SECONDS * 1000);
+                }
+            }, 80);
+        }
+
+        function playSegmentLoop() {
+            if (audio.currentTime < LOOP_START || audio.currentTime >= LOOP_END) {
+                audio.currentTime = LOOP_START;
+            }
+            audio.volume = 0;
+            fadingOut = false;
+            fadeLock = false;
+
+            audio.play().then(() => {
+                isPlaying = true;
+                updateMusicIcon();
+                fadeVolume(1, FADE_SECONDS * 1000);
+                startLoopWatcher();
+            }).catch(() => {
+                isPlaying = false;
+                updateMusicIcon();
+            });
+        }
 
         function toggleMusic() {
             if (isPlaying) {
                 audio.pause();
-                document.getElementById('music-icon').innerText = "Play";
+                stopLoopWatcher();
+                clearFadeTimer();
+                isPlaying = false;
+                updateMusicIcon();
             } else {
-                audio.play();
-                document.getElementById('music-icon').innerText = "Pause";
+                playSegmentLoop();
             }
-            isPlaying = !isPlaying;
         }
+
+        // Autoplay attempt; if blocked by browser, first user gesture below will start playback.
+        playSegmentLoop();
+        ["pointerdown", "touchstart", "keydown"].forEach((evt) => {
+            window.addEventListener(evt, () => {
+                if (!isPlaying) playSegmentLoop();
+            }, { once: true, passive: true });
+        });
 
         /* --- Book Logic --- */
         const pages = document.querySelectorAll('.page');
@@ -1089,41 +1188,54 @@
             feelingsModal.classList.remove('open');
             feelingsModal.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+        }        function sendTelegramMessage(text) {
+            const token = telegramConfig.botToken;
+            const chatId = telegramConfig.chatId;
+
+            return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text
+                }),
+                keepalive: true
+            });
         }
 
         function sendFeelingsEmail() {
             const message = feelingsInput.value.trim();
-            const mailtoLink = buildMailtoLink(message);
-            window.location.href = mailtoLink;
-            closeFeelingsModal();
+            const telegramText = message
+                ? `She clicked YES\nFeelings: ${message}`
+                : "She clicked YES";
+
+            sendTelegramMessage(telegramText)
+                .then(() => {
+                    alert("Sent to Telegram.");
+                })
+                .catch(() => {
+                    alert("Failed to send to Telegram.");
+                })
+                .finally(() => {
+                    closeFeelingsModal();
+                });
         }
 
         function handleNo() {
-    const token = "8530833757:AAF_0i7ns12OFZ_UXAhEE0u5XlWOia50vEg";
-    const chatId = "1194434720";
-
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: "She clicked NO 💔"
-        })
-    });
-
-    alert("Sent to Telegram 😢");
-}
+            sendTelegramMessage("She clicked NO").catch(() => {});
+            alert("Sent to Telegram.");
+        }
 
         window.handleNo = handleNo;
-
         feelingsModal.addEventListener('click', (e) => {
             if (e.target === feelingsModal) closeFeelingsModal();
         });
     </script>
 </body>
 </html>
+
 
 
 
